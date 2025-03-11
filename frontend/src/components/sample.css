@@ -1,0 +1,14 @@
+.display{
+    display:flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center;  
+}
+.board{
+    height: 540px;
+    width: 630px;
+    border: 10px navy;
+    background-color: blue;
+    border-radius: 20px;
+
+    display: flex;
+}
