@@ -118,6 +118,7 @@ def find_best_move(board_state, difficulty):
                     winning_board_states.append(new_board_state)
                 elif winner == 0:
                     tie_board_states.append(new_board_state)
+                col[index] = 0.0
                 index = -1
         if not winning_board_states:
             if not tie_board_states:
@@ -141,9 +142,9 @@ def find_best_move(board_state, difficulty):
         return board_state_to_return
 
 
-input = [1., 1., 1., 2., 2., 1., 0.,
-        2., 2., 2., 1., 2., 2., 0.,
-        2., 1., 1., 2., 1., 1., 0.,
+input = [0., 0., 0., 0., 0., 0., 0.,
+        0., 0., 0., 0., 0., 0., 0.,
+        0., 0., 0., 0., 0., 1., 0.,
         1., 2., 1., 2., 2., 2., 0.,
         1., 1., 2., 2., 1., 1., 1.,
         2., 1., 2., 1., 2., 1., 2.,]
