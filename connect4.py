@@ -49,9 +49,15 @@ def convert_to_board_state(col1, col2, col3, col4, col5, col6, col7):
         board_state.append(col7[i])
     return board_state
 
-def find_best_move(board_state):
+def find_best_move(board_state, difficulty):
+    model_path = ""
 
-    model_path = resource_path("model.pth")
+    if difficulty == "hard":
+        model_path = resource_path("hard_model.pth")
+    elif difficulty == "medium":
+        model_path = resource_path("medium_model.pth")
+    else:
+        model_path = resource_path("easy_model.pth")
 
     model = torch.load(model_path)
 
@@ -141,5 +147,6 @@ input = [1., 1., 1., 2., 2., 1., 0.,
         1., 2., 1., 2., 2., 2., 0.,
         1., 1., 2., 2., 1., 1., 1.,
         2., 1., 2., 1., 2., 1., 2.,]
-board_state = find_best_move(input)
+difficulty = "hard"
+board_state = find_best_move(input, difficulty)
 print(board_state)

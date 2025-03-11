@@ -75,7 +75,7 @@ def test():
     averagecorrect = correct / size
     print(f"Test Error: \n NumCorrect: {(int(correct))}/{(size)}, Accuracy: {(100*averagecorrect):>0.1f}%, Avg loss: {test_loss:>8f} \n")
 
-batch_size_train = 500
+batch_size_train = 100
 batch_size_test = 1000
 
 training_data_file = np.loadtxt('/Users/davidroth/Documents/ECS171/Final Project/c4_game_database.csv', delimiter = ',', dtype = float, skiprows = 1, max_rows = 300000)
@@ -97,7 +97,7 @@ network = ConnectFourDeepNet()
 
 optimizer = optim.SGD(network.parameters(), lr = learning_rate, momentum = momentum)
 
-epochs = 3
+epochs = 50
 test()
 for t in range(epochs):
     print(f"Epoch {t+1}\n-------------------------------")
