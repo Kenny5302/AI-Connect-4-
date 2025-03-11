@@ -1,13 +1,15 @@
 import os
+import random
 import sys
+
+import numpy as np
 import torch
-import torch.nn as nn 
+import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import Dataset
 from torchvision import datasets, transforms
-import numpy as np
-import random
+
 
 def resource_path(relative_path):
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
@@ -142,12 +144,13 @@ def find_best_move(board_state, difficulty):
         return board_state_to_return
 
 
-input = [0., 0., 0., 0., 0., 0., 0.,
-        0., 0., 0., 0., 0., 0., 0.,
-        0., 0., 0., 0., 0., 1., 0.,
-        1., 2., 1., 2., 2., 2., 0.,
-        1., 1., 2., 2., 1., 1., 1.,
-        2., 1., 2., 1., 2., 1., 2.,]
-difficulty = "hard"
-board_state = find_best_move(input, difficulty)
-print(board_state)
+if __name__ == "__main__":
+    input = [0., 0., 0., 0., 0., 0., 0.,
+            0., 0., 0., 0., 0., 0., 0.,
+            0., 0., 0., 0., 0., 1., 0.,
+            1., 2., 1., 2., 2., 2., 0.,
+            1., 1., 2., 2., 1., 1., 1.,
+            2., 1., 2., 1., 2., 1., 2.,]
+    difficulty = "hard"
+    board_state = find_best_move(input, difficulty)
+    print(board_state)

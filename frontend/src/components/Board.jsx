@@ -1,6 +1,6 @@
+import axios from "axios";
+import { useState } from "react";
 import Slot from "./Slot";
-import {useState} from "react";
-//BACKEND: import axios from "axios";  // Import axios for HTTP requests
 
 const Board = () => {
     const [board, setBoard] = useState([
@@ -17,81 +17,81 @@ const Board = () => {
 
     const checkWin = (row, column, ch) => {
         /*down 4*/
-        try{
-            if(board[row + 1][column] === ch) {
-                if(board[row + 2][column] === ch) {
-                    if(board[row + 3][column] === ch) {
+        try {
+            if (board[row + 1][column] === ch) {
+                if (board[row + 2][column] === ch) {
+                    if (board[row + 3][column] === ch) {
                         return true;
                     }
                 }
             }
-        } catch (e) {console.log(e)}
-        
+        } catch (e) { console.log(e) }
+
         /* side right 4 */
-        try{
-            if(board[row][column + 1] === ch) {
-                if(board[row][column + 2] === ch) {
-                    if(board[row][column + 3] === ch) {
+        try {
+            if (board[row][column + 1] === ch) {
+                if (board[row][column + 2] === ch) {
+                    if (board[row][column + 3] === ch) {
                         return true;
                     }
                 }
             }
-        } catch (e) {console.log(e)}
+        } catch (e) { console.log(e) }
 
         /* side left 4 */
-        try{
-            if(board[row][column - 1] === ch) {
-                if(board[row][column - 2] === ch) {
-                    if(board[row][column - 3] === ch) {
+        try {
+            if (board[row][column - 1] === ch) {
+                if (board[row][column - 2] === ch) {
+                    if (board[row][column - 3] === ch) {
                         return true;
                     }
                 }
             }
-        } catch (e) {console.log(e)}
+        } catch (e) { console.log(e) }
 
         /* diagonal down right 4 */
-        try{
-            if(board[row + 1][column + 1] === ch) {
-                if(board[row + 2][column + 2] === ch) {
-                    if(board[row + 3][column + 3] === ch) {
+        try {
+            if (board[row + 1][column + 1] === ch) {
+                if (board[row + 2][column + 2] === ch) {
+                    if (board[row + 3][column + 3] === ch) {
                         return true;
                     }
                 }
             }
-        } catch (e) {console.log(e)}
+        } catch (e) { console.log(e) }
 
         /* diagonal down left 4 */
-        try{
-            if(board[row + 1][column - 1] === ch) {
-                if(board[row + 2][column - 2] === ch) {
-                    if(board[row + 3][column - 3] === ch) {
+        try {
+            if (board[row + 1][column - 1] === ch) {
+                if (board[row + 2][column - 2] === ch) {
+                    if (board[row + 3][column - 3] === ch) {
                         return true;
                     }
                 }
             }
-        } catch (e) {console.log(e)}
+        } catch (e) { console.log(e) }
 
         /* diagonal upper left 4 */
-        try{
-            if(board[row-1][column - 1] === ch) {
-                if(board[row-2][column - 2] === ch) {
-                    if(board[row-3][column - 3] === ch) {
+        try {
+            if (board[row - 1][column - 1] === ch) {
+                if (board[row - 2][column - 2] === ch) {
+                    if (board[row - 3][column - 3] === ch) {
                         return true;
                     }
                 }
             }
-        } catch (e) {console.log(e)}  
+        } catch (e) { console.log(e) }
 
         /* diagonal upper right 4 */
-        try{
-            if(board[row-1][column + 1] === ch) {
-                if(board[row-2][column + 2] === ch) {
-                    if(board[row-3][column + 3] === ch) {
+        try {
+            if (board[row - 1][column + 1] === ch) {
+                if (board[row - 2][column + 2] === ch) {
+                    if (board[row - 3][column + 3] === ch) {
                         return true;
                     }
                 }
             }
-        } catch (e) {console.log(e)} 
+        } catch (e) { console.log(e) }
     }
 
     const updateBoard = (row, column, ch) => {
@@ -113,8 +113,8 @@ const Board = () => {
         const column = e.target.getAttribute('x');
         let row = board.findIndex((rowArr, index) => {
             //finding bottommost slot token can go into
-            return (rowArr[column] !== '' || 
-            (index === board.length - 1));
+            return (rowArr[column] !== '' ||
+                (index === board.length - 1));
         })
         if (row !== board.length - 1) row -= 1;
         if (board[row][column] !== '') row -= 1;
@@ -123,11 +123,11 @@ const Board = () => {
         setGameOver(updateBoard(row, column, currPlayer));
 
         /* swap players */
-        if(!gameOver){
+        if (!gameOver) {
             const currPlayerCopy = currPlayer;
             setCurrPlayer(oppPlayer);
             setOppPlayer(currPlayerCopy);
-            
+
             /*BACKEND: MUST WAIT FOR REQUEST FOR MODEL'S MOVE */
             getModelMove(board)
         }
@@ -137,18 +137,13 @@ const Board = () => {
     //BACKEND    
     const getModelMove = async (currentBoard) => {
         try {
-            
-            // BACKEND: SAMPLE BACKEND REQUEST CODE
-            const response = (1, 1); //Delete 
-            /*
-            const response = await axios.post("http://your-backend-url/get-model-move", {
-                board: currentBoard, 
-                //BACKEND: board REPRESENTED AS 6X7 ARRAY OF '' OR 'X' OR 'O'. MODEL PLAYS 'O'
+            const response = await axios.post("http://localhost:5000/get-model-move", {
+                board: currentBoard,  // 6x7 array of '', 'X', 'O'
+                difficulty: "hard"     // Or dynamic difficulty
             });
-            */
 
-            //BACKEND: THE MOVE WE RECIEVE FROM MODEL
             const { row, column } = response.data;
+            console.log(`Model played row=${row} col=${column}`);
 
             setGameOver(updateBoard(row, column, currPlayer));
 
@@ -159,10 +154,38 @@ const Board = () => {
                 setOppPlayer(currPlayerCopy);
             }
 
-        } catch (e) {
-            console.log("Error getting model move", e);
+        } catch (error) {
+            console.error("Error getting model move:", error);
         }
     };
+    // const getModelMove = async (currentBoard) => {
+    //     try {
+
+    //         // BACKEND: SAMPLE BACKEND REQUEST CODE
+    //         const response = (1, 1); //Delete 
+    //         /*
+    //         const response = await axios.post("http://your-backend-url/get-model-move", {
+    //             board: currentBoard, 
+    //             //BACKEND: board REPRESENTED AS 6X7 ARRAY OF '' OR 'X' OR 'O'. MODEL PLAYS 'O'
+    //         });
+    //         */
+
+    //         //BACKEND: THE MOVE WE RECIEVE FROM MODEL
+    //         const { row, column } = response.data;
+
+    //         setGameOver(updateBoard(row, column, currPlayer));
+
+    //         // Swap turns after the model's move
+    //         if (!gameOver) {
+    //             const currPlayerCopy = currPlayer;
+    //             setCurrPlayer(oppPlayer);
+    //             setOppPlayer(currPlayerCopy);
+    //         }
+
+    //     } catch (e) {
+    //         console.log("Error getting model move", e);
+    //     }
+    // };
 
     return (
         <>
