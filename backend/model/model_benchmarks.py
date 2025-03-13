@@ -3,14 +3,12 @@ import random
 import sys
 
 import numpy as np
-from torch import tensor
 from torchmetrics.classification import MulticlassRecall, MulticlassPrecision, MulticlassF1Score
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import torch.optim as optim
 from torch.utils.data import Dataset
-from torchvision import datasets, transforms
+
 
 
 def resource_path(relative_path):
@@ -21,10 +19,10 @@ def resource_path(relative_path):
 class ConnectFourDeepNet(nn.Module):
     def __init__(self):
         super(ConnectFourDeepNet, self).__init__()
-        self.fc1 = nn.Linear(42, 500)
-        self.fc2 = nn.Linear(500, 20)
-        self.fc3 = nn.Linear(20, 500)
-        self.fc4 = nn.Linear(500, 3)
+        self.fc1 = nn.Linear(42, 300)
+        self.fc2 = nn.Linear(300, 700)
+        self.fc3 = nn.Linear(700, 300)
+        self.fc4 = nn.Linear(300, 3)
         
     def forward(self, x):
         x = self.fc1(x)

@@ -10,10 +10,10 @@ import numpy as np
 class ConnectFourDeepNet(nn.Module):
     def __init__(self):
         super(ConnectFourDeepNet, self).__init__()
-        self.fc1 = nn.Linear(42, 500)
-        self.fc2 = nn.Linear(500, 20)
-        self.fc3 = nn.Linear(20, 500)
-        self.fc4 = nn.Linear(500, 3)
+        self.fc1 = nn.Linear(42, 300)
+        self.fc2 = nn.Linear(300, 700)
+        self.fc3 = nn.Linear(700, 300)
+        self.fc4 = nn.Linear(300, 3)
         
     def forward(self, x):
         x = self.fc1(x)
@@ -97,7 +97,7 @@ network = ConnectFourDeepNet()
 
 optimizer = optim.SGD(network.parameters(), lr = learning_rate, momentum = momentum)
 
-epochs = 50
+epochs = 15
 test()
 for t in range(epochs):
     print(f"Epoch {t+1}\n-------------------------------")
@@ -105,4 +105,4 @@ for t in range(epochs):
     test()
 print("Done!")
 
-torch.save(network, 'model.pth')
+torch.save(network, 'test_model.pth')
