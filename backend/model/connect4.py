@@ -114,7 +114,7 @@ def find_best_move(board_state, difficulty):
                 attemped_board_states.append(new_board_state)
                 new_board_state_tensor = torch.tensor(new_board_state)
                 winner = model(new_board_state_tensor)
-                winner = winner.argmax(0)
+                winner = winner.argmax(1)
                 winner = int(winner.numpy())
                 if winner == 2:
                     winning_board_states.append(new_board_state)
