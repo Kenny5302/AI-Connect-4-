@@ -271,6 +271,7 @@ const Board = () => {
 
         //get col and row of the player's click
         const column = e.target.getAttribute('x');
+        if (column===null) return; //ignore clicks outside slots
         let row = board.findIndex((rowArr, index) => {
             //finding the occupied spot in the column || bottom of the column
             return (rowArr[column] !== '' ||
