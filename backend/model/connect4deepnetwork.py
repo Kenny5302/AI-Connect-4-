@@ -1,11 +1,12 @@
 import os
+
+import numpy as np
 import torch
-import torch.nn as nn 
+import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import Dataset
-from torchvision import datasets, transforms
-import numpy as np
+
 
 class ConnectFourDeepNet(nn.Module):
     def __init__(self):
@@ -14,7 +15,7 @@ class ConnectFourDeepNet(nn.Module):
         self.fc2 = nn.Linear(300, 700)
         self.fc3 = nn.Linear(700, 300)
         self.fc4 = nn.Linear(300, 3)
-        
+
     def forward(self, x):
         x = self.fc1(x)
         x = F.relu(x)
@@ -26,25 +27,26 @@ class ConnectFourDeepNet(nn.Module):
         x = F.relu(x)
 
         x = self.fc4(x)
-        x = F.log_softmax(x, dim = 1)
+        x = F.log_softmax(x, dim=-1)
         return x
-    
+
+
 class ConnectFourDataset(Dataset):
     def __init__(self, rawdata):
         rawdata = np.array(rawdata)
         rawlabels = rawdata[:, 42]
-        rawdatabase = rawdata[:,:42]
+        rawdatabase = rawdata[:, :42]
         self.labels = torch.from_numpy(rawlabels)
         self.database = torch.from_numpy(rawdatabase)
 
     def __len__(self):
         return len(self.labels)
-    
+
     def __getitem__(self, idx):
         data = self.database[idx]
         label = self.labels[idx]
         return data.float(), label.long()
-    
+
 
 def train(epoch):
     network.train()
@@ -55,7 +57,16 @@ def train(epoch):
         loss.backward()
         optimizer.step()
         if batch_idx % 200 == 0:
-           print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(epoch, batch_idx * len(data), len(train_loader.dataset), 100. * batch_idx / len(train_loader), loss.item()))
+            print(
+                "Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}".format(
+                    epoch,
+                    batch_idx * len(data),
+                    len(train_loader.dataset),
+                    100.0 * batch_idx / len(train_loader),
+                    loss.item(),
+                )
+            )
+
 
 def test():
     network.eval()
@@ -73,36 +84,47 @@ def test():
 
     test_loss /= num_batches
     averagecorrect = correct / size
-    print(f"Test Error: \n NumCorrect: {(int(correct))}/{(size)}, Accuracy: {(100*averagecorrect):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+    print(
+        f"Test Error: \n NumCorrect: {(int(correct))}/{(size)}, Accuracy: {(100*averagecorrect):>0.1f}%, Avg loss: {test_loss:>8f} \n"
+    )
 
-batch_size_train = 100
-batch_size_test = 1000
 
-training_data_file = np.loadtxt('/Users/davidroth/Documents/ECS171/Final Project/c4_game_database.csv', delimiter = ',', dtype = float, skiprows = 1, max_rows = 300000)
+if __name__ == "__main__":
 
-test_data_file = np.loadtxt('/Users/davidroth/Documents/ECS171/Final Project/c4_game_database.csv', delimiter = ',', dtype = float, skiprows = 300000)
+    batch_size_train = 100
+    batch_size_test = 1000
 
-training_data = ConnectFourDataset(training_data_file)
+    training_data_file = np.loadtxt(
+        "./c4_game_database.csv",
+        delimiter=",",
+        dtype=float,
+        skiprows=1,
+        max_rows=300000,
+    )
+    test_data_file = np.loadtxt(
+        "./c4_game_database.csv", delimiter=",", dtype=float, skiprows=300000
+    )
 
-test_data = ConnectFourDataset(test_data_file)
+    training_data = ConnectFourDataset(training_data_file)
+    test_data = ConnectFourDataset(test_data_file)
+    train_loader = torch.utils.data.DataLoader(
+        training_data, batch_size=batch_size_train, shuffle=True
+    )
+    test_loader = torch.utils.data.DataLoader(
+        test_data, batch_size=batch_size_test, shuffle=True
+    )
 
-train_loader = torch.utils.data.DataLoader(training_data, batch_size = batch_size_train, shuffle = True)
+    learning_rate = 0.01
+    momentum = 0.5
+    network = ConnectFourDeepNet()
+    optimizer = optim.SGD(network.parameters(), lr=learning_rate, momentum=momentum)
 
-test_loader = torch.utils.data.DataLoader(test_data, batch_size = batch_size_test, shuffle = True)
-
-learning_rate = 0.01
-momentum = 0.5
-
-network = ConnectFourDeepNet()
-
-optimizer = optim.SGD(network.parameters(), lr = learning_rate, momentum = momentum)
-
-epochs = 15
-test()
-for t in range(epochs):
-    print(f"Epoch {t+1}\n-------------------------------")
-    train(t + 1)
+    epochs = 15
     test()
-print("Done!")
+    for t in range(epochs):
+        print(f"Epoch {t+1}\n-------------------------------")
+        train(t + 1)
+        test()
+    print("Done!")
 
-torch.save(network, 'test_model.pth')
+    torch.save(network, "test_model.pth")
