@@ -4,11 +4,12 @@ import sys
 
 import torch
 from flask import Flask, request
+from flask_cors import cross_origin
 from flask_restx import Api, Resource, fields
 from model.connect4deepnetwork import ConnectFourDeepNet
 
 app = Flask(__name__)
-api = Api(app)
+api = Api(app, decorators=[cross_origin(origins="*")])
 
 move_request = api.model(
     "MoveRequest",
