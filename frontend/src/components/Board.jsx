@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Slot from "./Slot";
 
 const Board = () => {
@@ -14,9 +14,22 @@ const Board = () => {
     const [currPlayer, setCurrPlayer] = useState('X');
     const [oppPlayer, setOppPlayer] = useState('O');
     const [gameOver, setGameOver] = useState(false);
+    const [difficulty, setDifficulty] = useState('medium');
 
+    const handleDifficultyClick = (e) => {
+        setDifficulty(e.target.value);
+    }
+
+    //run only when its 'O' aka model's move
+    useEffect(() => {
+        if(currPlayer==='O' && !gameOver) {
+            getModelMove(board);
+        }
+    }, [currPlayer]); //runs whenever 'currPlayer' updates
+
+    
     const checkWin = (row, column, ch) => {
-        /*down 4*/
+        //down 4
         try {
             if (board[row + 1][column] === ch) {
                 if (board[row + 2][column] === ch) {
@@ -27,7 +40,7 @@ const Board = () => {
             }
         } catch (e) { console.log(e) }
 
-        /* side right 4 */
+        //side right 4
         try {
             if (board[row][column + 1] === ch) {
                 if (board[row][column + 2] === ch) {
@@ -38,7 +51,7 @@ const Board = () => {
             }
         } catch (e) { console.log(e) }
 
-        /* side left 4 */
+        //side left 4
         try {
             if (board[row][column - 1] === ch) {
                 if (board[row][column - 2] === ch) {
@@ -49,7 +62,7 @@ const Board = () => {
             }
         } catch (e) { console.log(e) }
 
-        /* diagonal down right 4 */
+        //diagonal down right 4 
         try {
             if (board[row + 1][column + 1] === ch) {
                 if (board[row + 2][column + 2] === ch) {
@@ -60,7 +73,7 @@ const Board = () => {
             }
         } catch (e) { console.log(e) }
 
-        /* diagonal down left 4 */
+        //diagonal down left 4 
         try {
             if (board[row + 1][column - 1] === ch) {
                 if (board[row + 2][column - 2] === ch) {
@@ -71,7 +84,7 @@ const Board = () => {
             }
         } catch (e) { console.log(e) }
 
-        /* diagonal upper left 4 */
+        //diagonal upper left 4
         try {
             if (board[row - 1][column - 1] === ch) {
                 if (board[row - 2][column - 2] === ch) {
@@ -82,7 +95,7 @@ const Board = () => {
             }
         } catch (e) { console.log(e) }
 
-        /* diagonal upper right 4 */
+        // diagonal upper right 4 
         try {
             if (board[row - 1][column + 1] === ch) {
                 if (board[row - 2][column + 2] === ch) {
@@ -93,6 +106,146 @@ const Board = () => {
             }
         } catch (e) { console.log(e) }
     }
+
+    /*
+    const checkWin = (row, column, ch) => {
+        const directions = [
+            { rowOffset: -1, colOffset: 0 },   // down
+            { rowOffset: 0, colOffset: 1 },    // right
+            { rowOffset: 0, colOffset: -1 },   // left
+            { rowOffset: 1, colOffset: 1 },    // down-right (diagonal)
+            { rowOffset: 1, colOffset: -1 },   // down-left (diagonal)
+            { rowOffset: -1, colOffset: -1 },  // up-left (diagonal)
+            { rowOffset: -1, colOffset: 1 },   // up-right (diagonal)
+        ];
+    
+        for (let dir of directions) {
+            let count = 1; // count includes the current piece
+    
+            // Check in one direction
+            for (let i = 1; i < 4; i++) {
+                const newRow = row + dir.rowOffset * i;
+                const newCol = column + dir.colOffset * i;
+    
+                // Ensure we don't go out of bounds and check for matching tokens
+                if (newRow >= 0 && newRow < board.length && newCol >= 0 && newCol < board[0].length) {
+                    if (board[newRow][newCol] === ch) {
+                        count++;
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+    
+            // Check in the opposite direction
+            for (let i = 1; i < 4; i++) {
+                const newRow = row - dir.rowOffset * i;
+                const newCol = column - dir.colOffset * i;
+    
+                // Ensure we don't go out of bounds and check for matching tokens
+                if (newRow >= 0 && newRow < board.length && newCol >= 0 && newCol < board[0].length) {
+                    if (board[newRow][newCol] === ch) {
+                        count++;
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+    
+            // If a line of 4 is found (including the current piece)
+            if (count >= 4) {
+                return true;
+            }
+        }
+    
+        return false;
+    };*/
+
+    /* online checkWin func logic
+    const checkWin = (ch) => {
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[0].length; j++) {
+                if (board[i][j] === ch) {
+                    // Downwards
+                    try {
+                        if (i + 3 < board.length && 
+                            board[i + 1][j] === ch && 
+                            board[i + 2][j] === ch && 
+                            board[i + 3][j] === ch) {
+                            return true;
+                        }
+                    } catch (e) {}
+    
+                    // Down-right diagonal
+                    try {
+                        if (i + 3 < board.length && j + 3 < board[0].length &&
+                            board[i + 1][j + 1] === ch && 
+                            board[i + 2][j + 2] === ch && 
+                            board[i + 3][j + 3] === ch) {
+                            return true;
+                        }
+                    } catch (e) {}
+    
+                    // Down-left diagonal
+                    try {
+                        if (i + 3 < board.length && j - 3 >= 0 &&
+                            board[i + 1][j - 1] === ch && 
+                            board[i + 2][j - 2] === ch && 
+                            board[i + 3][j - 3] === ch) {
+                            return true;
+                        }
+                    } catch (e) {}
+    
+                    // Right
+                    try {
+                        if (j + 3 < board[0].length &&
+                            board[i][j + 1] === ch && 
+                            board[i][j + 2] === ch && 
+                            board[i][j + 3] === ch) {
+                            return true;
+                        }
+                    } catch (e) {}
+    
+                    // Left
+                    try {
+                        if (j - 3 >= 0 &&
+                            board[i][j - 1] === ch && 
+                            board[i][j - 2] === ch && 
+                            board[i][j - 3] === ch) {
+                            return true;
+                        }
+                    } catch (e) {}
+    
+                    // Up-right diagonal
+                    try {
+                        if (i - 3 >= 0 && j + 3 < board[0].length &&
+                            board[i - 1][j + 1] === ch && 
+                            board[i - 2][j + 2] === ch && 
+                            board[i - 3][j + 3] === ch) {
+                            return true;
+                        }
+                    } catch (e) {}
+    
+                    // Up-left diagonal
+                    try {
+                        if (i - 3 >= 0 && j - 3 >= 0 &&
+                            board[i - 1][j - 1] === ch && 
+                            board[i - 2][j - 2] === ch && 
+                            board[i - 3][j - 3] === ch) {
+                            return true;
+                        }
+                    } catch (e) {}
+                }
+            }
+        }
+        return false;
+    }; */
+    
+    
 
     const updateBoard = (row, column, ch) => {
         setBoard(prev => {
@@ -105,41 +258,42 @@ const Board = () => {
         // return win value
         return checkWin(row, column, ch);
     }
-
+    const swapPlayers = () => {
+        if (!gameOver) {
+            setCurrPlayer(prev => {
+                setOppPlayer(prev);
+                return oppPlayer;
+            })
+        }    
+    }
     const handleClick = (e) => {
         console.log('board clicked');
 
         //get col and row of the player's click
         const column = e.target.getAttribute('x');
         let row = board.findIndex((rowArr, index) => {
-            //finding bottommost slot token can go into
+            //finding the occupied spot in the column || bottom of the column
             return (rowArr[column] !== '' ||
                 (index === board.length - 1));
         })
+        //if _row_ is not the last row, move one up (-=1)
         if (row !== board.length - 1) row -= 1;
+        //if slot at (row,col) is occupied, move one up
         if (board[row][column] !== '') row -= 1;
 
         //update board based on move
         setGameOver(updateBoard(row, column, currPlayer));
 
         /* swap players */
-        if (!gameOver) {
-            const currPlayerCopy = currPlayer;
-            setCurrPlayer(oppPlayer);
-            setOppPlayer(currPlayerCopy);
-
-            /*BACKEND: MUST WAIT FOR REQUEST FOR MODEL'S MOVE */
-            getModelMove(board)
-        }
-
+        swapPlayers();
     };
 
-    //BACKEND    
+    //BACKEND
     const getModelMove = async (currentBoard) => {
         try {
             const response = await axios.post("http://localhost:5000/get-model-move", {
                 board: currentBoard,  // 6x7 array of '', 'X', 'O'
-                difficulty: "hard"     // Or dynamic difficulty
+                difficulty: difficulty    // Or dynamic difficulty
             });
 
             const { row, column } = response.data;
@@ -148,56 +302,52 @@ const Board = () => {
             setGameOver(updateBoard(row, column, currPlayer));
 
             // Swap turns after the model's move
-            if (!gameOver) {
-                const currPlayerCopy = currPlayer;
-                setCurrPlayer(oppPlayer);
-                setOppPlayer(currPlayerCopy);
-            }
+            swapPlayers();
 
-        } catch (error) {
+        } catch (error) { //randomly play a move
             console.error("Error getting model move:", error);
+            
+            const column = Math.floor(Math.random() * 7);
+            //find row for token given _column_
+            let row = board.findIndex((rowArr, index) => {
+                return (rowArr[column] !== '' ||
+                    (index === board.length - 1));
+            })
+            if (row !== board.length - 1) row -= 1;
+            if (board[row][column] !== '') row -= 1;
+
+            setGameOver(updateBoard(row, column, currPlayer));
+            swapPlayers();
         }
     };
-    // const getModelMove = async (currentBoard) => {
-    //     try {
 
-    //         // BACKEND: SAMPLE BACKEND REQUEST CODE
-    //         const response = (1, 1); //Delete 
-    //         /*
-    //         const response = await axios.post("http://your-backend-url/get-model-move", {
-    //             board: currentBoard, 
-    //             //BACKEND: board REPRESENTED AS 6X7 ARRAY OF '' OR 'X' OR 'O'. MODEL PLAYS 'O'
-    //         });
-    //         */
-
-    //         //BACKEND: THE MOVE WE RECIEVE FROM MODEL
-    //         const { row, column } = response.data;
-
-    //         setGameOver(updateBoard(row, column, currPlayer));
-
-    //         // Swap turns after the model's move
-    //         if (!gameOver) {
-    //             const currPlayerCopy = currPlayer;
-    //             setCurrPlayer(oppPlayer);
-    //             setOppPlayer(currPlayerCopy);
-    //         }
-
-    //     } catch (e) {
-    //         console.log("Error getting model move", e);
-    //     }
-    // };
 
     return (
         <>
+            {/* Difficulty selector */}
+            {!gameOver && (
+                <div>
+                    <label>Select Difficulty: </label>
+                    <select value={difficulty} onChange={handleDifficultyClick}>
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+
+                    </select>
+                </div>
+            )}
             {gameOver && (
                 <h1>Game Over! {oppPlayer === 'X' ? 'Red' : 'Model'} Wins!</h1>
             )}
-            <h2 id='playerDisplay'>{currPlayer === 'X' ? 'Your' : 'Computer'} Move</h2>
+            {!gameOver && (
+                <h2 id='playerDisplay'>{currPlayer === 'X' ? 'Your' : 'Computer'} Move</h2>
+            )}
             <div id='board'
                 onClick={gameOver ? null : handleClick}
             >
                 {board.map((row, i) => {
-                    return row.map((ch, j) => <Slot ch={ch} y={i} x={j} />);
+                    //small error, keys needed for each slot
+                    return row.map((ch, j) => <Slot key={`${i}-${j}`}ch={ch} y={i} x={j} />);
                 })}
             </div>
         </>
