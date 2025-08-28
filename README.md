@@ -1,7 +1,16 @@
-ECS171 Final Project - Deep Network for playing Connect-4
+# AI Connect 4 (React + Python/PyTorch)
 
-To train the model run the connect4deepnetwork.py file 
-If you want to change the model open the connect4deepnetwork.py file and you can change the batch sizes for both training and testing,
-how many epochs it is trained/tested for, and the number of layers/number of nodes in each layer.
+## Overview
+A full-stack **Connect 4** game with a React front end and a **PyTorch** backend that predicts the next best board state. The AI supports multiple difficulty levels (`easy`, `medium`, `hard`) via pre-trained models.
 
-To interact with the model run the connect4.py file which takes in a current board state in the form of an array and what difficulty setting you're playing and it will tell you the best move for the model to make and give you the updated board state. In case of more than one best move it randomly selects one, and in case of no best move it finds a move that will tie. In case of no tie moves it then randomly selects a move to take.
+## Features
+- **Interactive React UI** with a styled 7×6 board (`#board`, `.slot`) and smooth piece transitions.   
+- **Neural network policy** that evaluates board states and proposes the next move; models saved as `.pth` files.   
+- **Difficulty modes** that load different models at runtime (`easy_model.pth`, `medium_model.pth`, `hard_model.pth`).   
+- **Benchmark script** to evaluate model accuracy, precision/recall, and F1 on a held-out dataset. 
+
+## Tech Stack
+- **Frontend:** React, JavaScript, CSS  
+- **Backend / AI:** Python, PyTorch, TorchMetrics, NumPy  
+- **Data:** `c4_game_database.csv` (board states + labels) 
+
